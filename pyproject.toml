@@ -1,0 +1,18 @@
+[project]
+name = "wellsaid-mcp"
+version = "0.1.0"
+description = "An MCP server for using Wellsaid Text-To-Speech APIs"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "httpx>=0.26.0",
+    "python-dotenv>=1.0.1",
+    "pydantic>=2.6.0",
+    "fuzzywuzzy>=0.18.0",
+    "mcp>=1.12.4",
+]
+
+
+[project.scripts]
+wellsaid-mcp = "wellsaid_mcp.server:main"
+wellsaid-mcp-setup-claude-desktop = "wellsaid_mcp.setup_claude_desktop:main"

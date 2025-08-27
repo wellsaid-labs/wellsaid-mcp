@@ -1,0 +1,5 @@
+httpx>=0.26.0
+python-dotenv>=1.0.1
+pydantic>=2.6.0
+fuzzywuzzy>=0.18.0
+mcp>=0.2.0

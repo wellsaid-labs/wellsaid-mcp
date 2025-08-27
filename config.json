@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "wellsaid": {
+      "command": "/Users/preed/projects/mcp-server/run_mcp_server.sh",
+      "args": []
+    }
+  }
+}
