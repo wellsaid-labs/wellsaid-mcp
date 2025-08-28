@@ -28,7 +28,7 @@ Before getting started, make sure you have:
 If you only need the server for use with Claude Desktop, install from the published package:
 
 ```powershell bash
-uvx wellsaid-mcp-setup-claude-desktop
+uvx --from wellsaid-mcp wellsaid-mcp-setup-claude-desktop
 ```
 
 ### Option 2: Local Development
