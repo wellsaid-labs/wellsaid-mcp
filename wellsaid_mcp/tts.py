@@ -9,7 +9,7 @@ from wellsaid_mcp.utils import client
 import httpx
 import base64
 from pydantic import BaseModel#, Field, ConfigDict
-from typing import Any, Generator, Iterator, Literal, TypedDict, Dict
+from typing import Any, Generator, Iterator, List, Literal, TypedDict, Dict
 import time
 from mcp.server.fastmcp import Context
 from enum import Enum
@@ -23,6 +23,15 @@ class ClipContent(TextContent):
     clip_id:str
     file_path:Path
 
+class RespellingSuggestion(BaseModel):
+    # type:Literal["text"]="text"
+    word:str
+    respelling_suggestions:List[str]
+
+@dataclass
+class RespellingResult:
+    word:str
+    phonetic_respelling:str
 
 class ClipParams(TypedDict):
     text:str
@@ -312,3 +321,33 @@ async def create_multiple_clips_and_combine_in_background(
     # return TextContent(type="text", text=f"Saved file to {output_file}")
     task.status = TaskStatus.SUCCESS
     task.message = f"Saved file to {output_file}"
+
+@mcp.tool(description="""
+This tool will look up phonetic respelling options for a word. Some words can have multiple pronunciations.
+          These respellings are suitable for use with the apply_respelling tool.
+
+    Args
+          word: Word to look up phonetic respellings
+          locale: Specific locale. Acceptable values are us and uk. Default is us
+    
+    Returns
+          The RespellingSuggestion class contains a list of possible phonetic respellings for different pronunciations
+""")
+async def respelling_lookup(
+    context:Context, 
+    word:str,
+    locale:str = "us"
+    ) -> RespellingSuggestion|TextContent:
+    result = client.get(f"/respelling_suggestions", params={"locale":locale,"word":word})
+
+    if result.status_code != 200:
+        logging.error(f"Error looking phonetic respelling for {word}. Got status code {result.status_code} and value {result.content}")
+        return TextContent("There was an error looking up the phonetic respelling")
+
+    suggestions = result.json()
+
+    words = [RespellingResult(**item) for item in suggestions]
+    words = [item.phonetic_respelling for item in words]
+
+    return RespellingSuggestion(word=word,respelling_suggestions=words)
+
